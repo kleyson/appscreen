@@ -41,8 +41,7 @@ function initThreeJS() {
     threeRenderer.setSize(400, 700);
     threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     threeRenderer.outputEncoding = THREE.sRGBEncoding;
-    threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-    threeRenderer.toneMappingExposure = 1.2;
+    threeRenderer.toneMapping = THREE.NoToneMapping;
 
     container.appendChild(threeRenderer.domElement);
 
@@ -217,7 +216,7 @@ function createScreenOverlay() {
     customScreenPlane = new THREE.Mesh(geometry, material);
 
     // Position at center of phone, slightly in front of glass
-    customScreenPlane.position.set(0.025, 0.745, 0.0959); // slight Y offset to center in screen area
+    customScreenPlane.position.set(0.025, 0.745, 0.098); // slight Y offset to center in screen area
 
     // Add directly to phoneModel so it rotates with it
     phoneModel.add(customScreenPlane);
