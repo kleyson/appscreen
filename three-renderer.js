@@ -354,8 +354,9 @@ function renderThreeJSToCanvas(targetCanvas, width, height) {
     const originalBackground = threeScene.background;
     const originalPosition = phoneModel.position.clone();
     const originalScale = phoneModel.scale.clone();
+    const originalRotation = phoneModel.rotation.clone();
 
-    // Apply position from screenshot settings
+    // Apply position, scale, and rotation from screenshot settings
     if (typeof state !== 'undefined') {
         // Use getScreenshotSettings() helper if available, otherwise fall back to defaults
         const ss = typeof getScreenshotSettings === 'function' ? getScreenshotSettings() : state.defaults?.screenshot;
@@ -370,11 +371,20 @@ function renderThreeJSToCanvas(targetCanvas, width, height) {
             const xOffset = ((ss.x - 50) / 50) * 2; // -2 to 2 range
             const yOffset = -((ss.y - 50) / 50) * 3; // -3 to 3 range (inverted for 3D)
             phoneModel.position.set(xOffset, yOffset, 0);
+
+            // Rotation: apply 3D rotation from current screenshot settings
+            const rotation3D = ss.rotation3D || { x: 0, y: 0, z: 0 };
+            phoneModel.rotation.set(
+                rotation3D.x * Math.PI / 180,
+                rotation3D.y * Math.PI / 180,
+                rotation3D.z * Math.PI / 180
+            );
         }
     }
 
     // Set transparent background for compositing
     threeScene.background = null;
+    threeRenderer.setClearColor(0x000000, 0); // Fully transparent clear color
 
     // Temporarily resize renderer
     const oldSize = { width: 400, height: 700 };
@@ -399,6 +409,7 @@ function renderThreeJSToCanvas(targetCanvas, width, height) {
     threeScene.background = originalBackground;
     phoneModel.position.copy(originalPosition);
     phoneModel.scale.copy(originalScale);
+    phoneModel.rotation.copy(originalRotation);
 }
 
 // Render 3D for a specific screenshot index (used for side previews)
@@ -451,6 +462,7 @@ function renderThreeJSForScreenshot(targetCanvas, width, height, screenshotIndex
 
     // Set transparent background for compositing
     threeScene.background = null;
+    threeRenderer.setClearColor(0x000000, 0); // Fully transparent clear color
 
     // Temporarily resize renderer
     const oldSize = { width: 400, height: 700 };
